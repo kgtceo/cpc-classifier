@@ -1,11 +1,28 @@
-import type { ClassificationResult, SamplesResponse } from "./types";
+import { FALLBACK_SAMPLES } from "./samples";
+import type { ClassificationResult, Sample, SamplesResponse } from "./types";
 
 const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000").replace(/\/+$/, "");
 
+const FALLBACK_DISCLAIMER =
+  "Demo/educational tool using an illustrative CPC subset (not the full scheme). " +
+  "Suggestions only — not a substitute for a professional classification search.";
+
+// Never rejects: falls back to the baked-in samples when the API is cold or the
+// response isn't the expected shape, so "Load example" always works.
 export async function getSamples(): Promise<SamplesResponse> {
-  const res = await fetch(`${API_URL}/api/samples`);
-  if (!res.ok) throw new Error(`Could not load samples (${res.status})`);
-  return res.json();
+  try {
+    const res = await fetch(`${API_URL}/api/samples`);
+    if (!res.ok) throw new Error(`status ${res.status}`);
+    const body = await res.json();
+    const ok =
+      Array.isArray(body?.samples) &&
+      body.samples.length > 0 &&
+      body.samples.every((s: Sample) => typeof s?.text === "string" && typeof s?.label === "string");
+    if (!ok) throw new Error("unexpected samples shape");
+    return body as SamplesResponse;
+  } catch {
+    return { samples: FALLBACK_SAMPLES, disclaimer: FALLBACK_DISCLAIMER };
+  }
 }
 
 export async function classify(invention: string): Promise<ClassificationResult> {
