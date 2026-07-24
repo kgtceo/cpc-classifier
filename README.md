@@ -56,6 +56,7 @@ invention ─▶ Voyage embed ─▶ cosine search over CPC subset ─▶ candid
 `VOYAGE_API_KEY` (embeddings). The offline test suite needs neither.
 
 ```bash
+python -m venv .venv && source .venv/bin/activate
 pip install -e .
 cp .env.example .env   # add ANTHROPIC_API_KEY + VOYAGE_API_KEY
 
