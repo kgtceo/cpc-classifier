@@ -25,6 +25,37 @@
     "expect_abstain": false
   },
   {
+    "invention": "A cryptographic communications system in which a message is encoded as a number M and enciphered by raising M to a predetermined power and computing the remainder when divided by the product of two predetermined prime numbers; the ciphertext is deciphered at the receiving terminal by raising it to a second predetermined power associated with the receiver and computing the residue modulo the same product of primes, recovering the original message.",
+    "expected_symbols": ["H04L 9/302", "H04L 9/30", "H04L 9/00"],
+    "expect_abstain": false,
+    "source": "Real patent: US 4,405,829 (RSA public-key cryptosystem, granted 1983, expired) — abstract, condensed; real CPC classifications include H04L 9/302 and H04L 9/30"
+  },
+  {
+    "invention": "A speech recognition system that converts spoken commands into text by analysing the audio signal with an acoustic model.",
+    "expected_symbols": ["G10L"],
+    "expect_abstain": false
+  },
+  {
+    "invention": "A radar system that determines the distance and velocity of an aircraft by measuring the time delay and Doppler shift of reflected radio waves.",
+    "expected_symbols": ["G01S 13/00", "G01S"],
+    "expect_abstain": false
+  },
+  {
+    "invention": "A programme-controlled robotic manipulator arm that picks components from a conveyor and places them for assembly.",
+    "expected_symbols": ["B25J 9/00", "B25J"],
+    "expect_abstain": false
+  },
+  {
+    "invention": "A method of image analysis that segments object boundaries in a bitmap image and extracts their contours for measurement.",
+    "expected_symbols": ["G06T 7/00", "G06T"],
+    "expect_abstain": false
+  },
+  {
+    "invention": "A mobile payment system that authorises contactless transactions between a phone wallet and a merchant terminal.",
+    "expected_symbols": ["G06Q 20/00", "G06Q"],
+    "expect_abstain": false
+  },
+  {
     "invention": "A new recipe for a gluten-free sourdough bread using a wild yeast starter and a slow overnight fermentation.",
     "expected_symbols": [],
     "expect_abstain": true

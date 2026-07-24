@@ -37,8 +37,8 @@ def test_hallucinated_symbol_is_dropped(settings):
     assert bogus not in retrieved_symbols
     client = FakeClassifierClient(Classification(
         candidates=[
-            CpcCandidate(symbol=bogus, title="Made up", confidence=0.9, evidence_span="x"),
-            CpcCandidate(symbol=retrieved_symbols[0], title="whatever", confidence=0.8, evidence_span="x"),
+            CpcCandidate(symbol=bogus, title="Made up", confidence=0.9, evidence_span="some invention"),
+            CpcCandidate(symbol=retrieved_symbols[0], title="whatever", confidence=0.8, evidence_span="some invention"),
         ],
         abstained=False,
     ))
@@ -55,11 +55,59 @@ def test_title_is_normalised_to_canonical(settings):
     invention = "an invention"  # same string for retrieval check and classify()
     r0 = idx.search(invention, settings.top_k)[0].cpc_class
     client = FakeClassifierClient(Classification(
-        candidates=[CpcCandidate(symbol=r0.symbol, title="MODEL REWROTE THIS", confidence=0.9, evidence_span="x")],
+        candidates=[CpcCandidate(symbol=r0.symbol, title="MODEL REWROTE THIS", confidence=0.9, evidence_span="an invention")],
         abstained=False,
     ))
     result = Classifier(idx, client, settings).classify(invention)
     assert result.candidates[0].title == r0.title
+
+
+def test_fabricated_evidence_span_drops_candidate(settings):
+    """A candidate whose evidence_span is not a verbatim substring of the invention is dropped —
+    the model can't fabricate the supporting phrase. If nothing survives, we abstain."""
+    idx = _index()
+    invention = "a device that measures heart rate"
+    r0 = idx.search(invention, settings.top_k)[0].cpc_class
+    client = FakeClassifierClient(Classification(
+        candidates=[CpcCandidate(
+            symbol=r0.symbol, title=r0.title, confidence=0.9,
+            evidence_span="continuously monitors cardiac rhythm",  # not in the invention text
+        )],
+        abstained=False,
+    ))
+    result = Classifier(idx, client, settings).classify(invention)
+    assert result.candidates == []
+    assert result.abstained is True
+
+
+def test_grounded_evidence_span_is_case_and_whitespace_insensitive(settings):
+    """Grounding normalises case + whitespace, so an honest quote isn't dropped over formatting."""
+    idx = _index()
+    invention = "A device that   Measures Heart Rate for diagnostics"
+    r0 = idx.search(invention, settings.top_k)[0].cpc_class
+    client = FakeClassifierClient(Classification(
+        candidates=[CpcCandidate(
+            symbol=r0.symbol, title=r0.title, confidence=0.9,
+            evidence_span="measures heart rate",
+        )],
+        abstained=False,
+    ))
+    result = Classifier(idx, client, settings).classify(invention)
+    assert [c.symbol for c in result.candidates] == [r0.symbol]
+
+
+def test_empty_evidence_span_drops_candidate(settings):
+    """An empty evidence_span is no evidence — the candidate is dropped."""
+    idx = _index()
+    invention = "an invention description"
+    r0 = idx.search(invention, settings.top_k)[0].cpc_class
+    client = FakeClassifierClient(Classification(
+        candidates=[CpcCandidate(symbol=r0.symbol, title=r0.title, confidence=0.9, evidence_span="  ")],
+        abstained=False,
+    ))
+    result = Classifier(idx, client, settings).classify(invention)
+    assert result.candidates == []
+    assert result.abstained is True
 
 
 def test_abstain_when_model_returns_nothing(settings):

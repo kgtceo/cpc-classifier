@@ -1,17 +1,27 @@
 """invention -> retrieved candidate CPC classes -> LLM selection (validated) -> ClassificationResult.
 
-The safety guarantee lives here: after the LLM selects, we DROP any candidate whose symbol
-was not among the retrieved candidates. So even if the model invents a symbol, it can never reach
-the output. If nothing survives, we abstain.
+The safety guarantee lives here, in two deterministic filters applied AFTER the LLM selects:
+  1. Symbol filter — DROP any candidate whose symbol was not among the retrieved candidates,
+     so even if the model invents a symbol, it can never reach the output.
+  2. Evidence filter — DROP any candidate whose evidence_span is not a verbatim substring of
+     the invention description (whitespace/case-normalised), so the model can't fabricate the
+     "supporting phrase" either. If you can't quote it, you can't claim it.
+If nothing survives, we abstain.
 """
 
 from __future__ import annotations
+
+import re
 
 from . import prompts
 from .classes import ClassIndex
 from .client import LLMClient
 from .config import Settings
 from .models import Classification, ClassificationResult, CpcCandidate
+
+
+def _norm(text: str) -> str:
+    return re.sub(r"\s+", " ", text).strip().lower()
 
 
 class Classifier:
@@ -36,12 +46,18 @@ class Classifier:
             ),
         )
 
-        # Enforce the guarantee: keep only candidates whose symbol was actually retrieved, and
-        # normalise the title to the canonical one (ignore any title the model rewrote).
+        # Enforce the guarantees: keep only candidates whose symbol was actually retrieved AND
+        # whose evidence_span is a verbatim substring of the invention (a fabricated "supporting
+        # phrase" is a fabricated fact — drop the candidate). Titles are normalised to canonical.
+        invention_norm = _norm(invention)
         valid: list[CpcCandidate] = []
         for c in selection.candidates:
-            if c.symbol in allowed:
-                valid.append(c.model_copy(update={"title": allowed[c.symbol]}))
+            if c.symbol not in allowed:
+                continue
+            span_norm = _norm(c.evidence_span)
+            if not span_norm or span_norm not in invention_norm:
+                continue
+            valid.append(c.model_copy(update={"title": allowed[c.symbol]}))
 
         return ClassificationResult(
             invention=invention,

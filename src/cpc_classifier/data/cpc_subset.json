@@ -16,6 +16,8 @@
   {"symbol": "G10L", "title": "Speech analysis or synthesis; speech recognition; audio coding"},
   {"symbol": "H04L", "title": "Transmission of digital information, e.g. telegraphic communication"},
   {"symbol": "H04L 9/00", "title": "Cryptographic mechanisms or cryptographic arrangements for secret or secure communications"},
+  {"symbol": "H04L 9/30", "title": "Public key cryptography, i.e. encryption algorithms computationally infeasible to invert and users' encryption keys not requiring secrecy"},
+  {"symbol": "H04L 9/302", "title": "Public key cryptography involving the integer factorization problem, e.g. RSA or quadratic sieve algorithm"},
   {"symbol": "H04L 9/32", "title": "Arrangements for secret or secure communications including means for verifying the identity or authority of a user"},
   {"symbol": "H04L 12/00", "title": "Data switching networks"},
   {"symbol": "H04W", "title": "Wireless communication networks"},

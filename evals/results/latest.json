@@ -1,0 +1,269 @@
+{
+  "run": {
+    "timestamp_utc": "2026-07-24T04:32:27+00:00",
+    "model": "claude-sonnet-4-6",
+    "embed_model": "voyage-3",
+    "judge_model": "claude-opus-4-8",
+    "dataset_size": 12,
+    "subset_size": 52
+  },
+  "metrics": {
+    "top1": "11/11",
+    "top1_rate": 1.0,
+    "recall_at_k_avg": 0.924,
+    "judge_pass": "12/12",
+    "all_gates_passed": true
+  },
+  "failures": [],
+  "per_case": [
+    {
+      "invention": "A method for training a deep neural network by adjusting weights via backpropaga",
+      "source": null,
+      "expected": [
+        "G06N 3/02",
+        "G06N 3/08"
+      ],
+      "selected": [
+        "G06N 3/02",
+        "G06N 3/08",
+        "G06V"
+      ],
+      "abstained": false,
+      "top1_correct": true,
+      "recall_at_k": 1.0,
+      "judge": {
+        "selection_sound": true,
+        "evidence_supports": true,
+        "no_overclaim": true,
+        "comment": "All three chosen classes fit: backpropagation training maps to G06N 3/08, the neural network structure to G06N 3/02, and object recognition in images to G06V, each with directly supporting quotes and reasonable confidences."
+      }
+    },
+    {
+      "invention": "A rechargeable lithium-ion secondary battery cell with improved electrode chemis",
+      "source": null,
+      "expected": [
+        "H01M",
+        "H01M 10/00"
+      ],
+      "selected": [
+        "H01M",
+        "H01M 10/00"
+      ],
+      "abstained": false,
+      "top1_correct": true,
+      "recall_at_k": 1.0,
+      "judge": {
+        "selection_sound": true,
+        "evidence_supports": true,
+        "no_overclaim": true,
+        "comment": "Both chosen classes correctly capture a rechargeable lithium-ion secondary battery cell: H01M 10/00 for secondary cells and the broader H01M parent, each backed by directly relevant evidence. Confidences are reasonable, and the assistant sensibly avoided the vehicle-control and unrelated candidates."
+      }
+    },
+    {
+      "invention": "An automotive driver-assistance system that estimates road conditions and contro",
+      "source": null,
+      "expected": [
+        "B60W",
+        "B60W 30/00",
+        "B60W 40/00"
+      ],
+      "selected": [
+        "B60W 30/00",
+        "B60W 40/00",
+        "G01S 13/00",
+        "G01S 17/00"
+      ],
+      "abstained": false,
+      "top1_correct": true,
+      "recall_at_k": 0.667,
+      "judge": {
+        "selection_sound": true,
+        "evidence_supports": true,
+        "no_overclaim": true,
+        "comment": "All four classes fit: B60W 40/00 covers road-condition estimation, B60W 30/00 covers speed/steering drive control, and G01S 17/00 and 13/00 correctly map to lidar and radar respectively. Evidence quotes directly support each class, and confidences are reasonable given the explicit text (though the lidar/radar evidence is shared, both sensor types are named)."
+      }
+    },
+    {
+      "invention": "A cryptographic protocol for verifying the identity of a user during secure comm",
+      "source": null,
+      "expected": [
+        "H04L 9/00",
+        "H04L 9/32"
+      ],
+      "selected": [
+        "H04L 9/00",
+        "H04L 9/32"
+      ],
+      "abstained": false,
+      "top1_correct": true,
+      "recall_at_k": 1.0,
+      "judge": {
+        "selection_sound": true,
+        "evidence_supports": true,
+        "no_overclaim": true,
+        "comment": "Both chosen classes fit precisely: H04L 9/32 matches identity verification via digital signatures, and H04L 9/00 is the correct parent for cryptographic secure communications; the quoted evidence directly supports each, and confidences are appropriately calibrated. No obviously-better candidate (e.g., public-key subclasses) was ignored since the description does not specify a signature algorithm."
+      }
+    },
+    {
+      "invention": "A wearable device that measures a patient's physiological signals for diagnostic",
+      "source": null,
+      "expected": [
+        "A61B",
+        "A61B 5/00"
+      ],
+      "selected": [
+        "A61B",
+        "A61B 5/00"
+      ],
+      "abstained": false,
+      "top1_correct": true,
+      "recall_at_k": 1.0,
+      "judge": {
+        "selection_sound": true,
+        "evidence_supports": true,
+        "no_overclaim": true,
+        "comment": "Both A61B 5/00 and its parent A61B genuinely fit a wearable that measures physiological signals for diagnosis and identifies the wearer, and the evidence quotes directly match. Confidences are reasonable, with the more specific class rated higher."
+      }
+    },
+    {
+      "invention": "A cryptographic communications system in which a message is encoded as a number ",
+      "source": "Real patent: US 4,405,829 (RSA public-key cryptosystem, granted 1983, expired) \u2014 abstract, condensed; real CPC classifications include H04L 9/302 and H04L 9/30",
+      "expected": [
+        "H04L 9/00",
+        "H04L 9/30",
+        "H04L 9/302"
+      ],
+      "selected": [
+        "H04L 9/00",
+        "H04L 9/30",
+        "H04L 9/302"
+      ],
+      "abstained": false,
+      "top1_correct": true,
+      "recall_at_k": 1.0,
+      "judge": {
+        "selection_sound": true,
+        "evidence_supports": true,
+        "no_overclaim": true,
+        "comment": "The invention is a textbook description of RSA, so H04L 9/302 (integer factorization/RSA) is the precise class with strong supporting evidence, and its parent classes H04L 9/30 and H04L 9/00 are correct hierarchical fits. Evidence quotes genuinely support each class and confidences are well-calibrated (highest for the exact RSA match, lower for the broader parents)."
+      }
+    },
+    {
+      "invention": "A speech recognition system that converts spoken commands into text by analysing",
+      "source": null,
+      "expected": [
+        "G10L"
+      ],
+      "selected": [
+        "G10L"
+      ],
+      "abstained": false,
+      "top1_correct": true,
+      "recall_at_k": 1.0,
+      "judge": {
+        "selection_sound": true,
+        "evidence_supports": true,
+        "no_overclaim": true,
+        "comment": "G10L squarely covers speech recognition and audio signal analysis, and the quoted evidence directly matches; the high confidence is justified given the exact fit. No better candidate was ignored (neural-network classes are not indicated by the text)."
+      }
+    },
+    {
+      "invention": "A radar system that determines the distance and velocity of an aircraft by measu",
+      "source": null,
+      "expected": [
+        "G01S",
+        "G01S 13/00"
+      ],
+      "selected": [
+        "G01S",
+        "G01S 13/00"
+      ],
+      "abstained": false,
+      "top1_correct": true,
+      "recall_at_k": 1.0,
+      "judge": {
+        "selection_sound": true,
+        "evidence_supports": true,
+        "no_overclaim": true,
+        "comment": "Both G01S 13/00 (radio-wave reflection radar) and its parent G01S fit precisely; the invention explicitly uses reflected radio waves, time delay, and Doppler shift to find distance and velocity. Evidence quotes directly support both classes and confidences are appropriately high."
+      }
+    },
+    {
+      "invention": "A programme-controlled robotic manipulator arm that picks components from a conv",
+      "source": null,
+      "expected": [
+        "B25J",
+        "B25J 9/00"
+      ],
+      "selected": [
+        "B25J",
+        "B25J 9/00"
+      ],
+      "abstained": false,
+      "top1_correct": true,
+      "recall_at_k": 1.0,
+      "judge": {
+        "selection_sound": true,
+        "evidence_supports": true,
+        "no_overclaim": true,
+        "comment": "Both B25J 9/00 (programme-controlled manipulators) and the parent B25J class fit the described programme-controlled robotic manipulator arm perfectly, and the quoted evidence directly supports each. Confidences are appropriately high given the near-verbatim match, with no overclaiming."
+      }
+    },
+    {
+      "invention": "A method of image analysis that segments object boundaries in a bitmap image and",
+      "source": null,
+      "expected": [
+        "G06T",
+        "G06T 7/00"
+      ],
+      "selected": [
+        "G06T",
+        "G06T 7/00"
+      ],
+      "abstained": false,
+      "top1_correct": true,
+      "recall_at_k": 1.0,
+      "judge": {
+        "selection_sound": true,
+        "evidence_supports": true,
+        "no_overclaim": true,
+        "comment": "Both classes fit well: G06T 7/00 directly covers image analysis with segmentation/contour extraction, and the parent G06T is a sound broader class. Evidence quotes directly support each, and confidences are reasonable given the strong textual match."
+      }
+    },
+    {
+      "invention": "A mobile payment system that authorises contactless transactions between a phone",
+      "source": null,
+      "expected": [
+        "G06Q",
+        "G06Q 20/00"
+      ],
+      "selected": [
+        "G06Q 20/00",
+        "H04W 4/00"
+      ],
+      "abstained": false,
+      "top1_correct": true,
+      "recall_at_k": 0.5,
+      "judge": {
+        "selection_sound": true,
+        "evidence_supports": true,
+        "no_overclaim": true,
+        "comment": "G06Q 20/00 is the core fit for a mobile payment system, strongly supported by the evidence and high confidence. H04W 4/00 is a reasonable secondary fit for the wireless/contactless aspect at a moderate 0.72 confidence, and its evidence quote about contactless transactions between phone and terminal supports the wireless-service class without overclaiming."
+      }
+    },
+    {
+      "invention": "A new recipe for a gluten-free sourdough bread using a wild yeast starter and a ",
+      "source": null,
+      "expected": [],
+      "selected": [],
+      "abstained": true,
+      "abstention_correct": true,
+      "judge": {
+        "selection_sound": true,
+        "evidence_supports": true,
+        "no_overclaim": true,
+        "comment": "The invention is a gluten-free sourdough bread recipe, which properly belongs in food classes (e.g., A21D) not present among the candidates; none of the offered classes (batteries, surgery, image processing, ML, etc.) genuinely fit, and even C12N (micro-organisms) would be a forced stretch for a recipe. Abstaining is the correct, non-overclaiming choice."
+      }
+    }
+  ]
+}

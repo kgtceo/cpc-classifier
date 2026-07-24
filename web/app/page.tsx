@@ -2,11 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { classify, getSamples } from "../lib/api";
-import type { ClassificationResult } from "../lib/types";
+import type { ClassificationResult, Sample } from "../lib/types";
 
 export default function Home() {
   const [invention, setInvention] = useState("");
-  const [samples, setSamples] = useState<string[]>([]);
+  const [samples, setSamples] = useState<Sample[]>([]);
   const [disclaimer, setDisclaimer] = useState("");
   const [result, setResult] = useState<ClassificationResult | null>(null);
   const [loading, setLoading] = useState(false);
@@ -58,7 +58,10 @@ export default function Home() {
       {samples.length > 0 && (
         <div className="examples">
           {samples.map((ex) => (
-            <span className="chip" key={ex} onClick={() => { setInvention(ex); run(ex); }}>{ex}</span>
+            <span className="chip" key={ex.label} onClick={() => { setInvention(ex.text); run(ex.text); }}>
+              {ex.label}
+              {ex.tag && <span className="tag">{ex.tag}</span>}
+            </span>
           ))}
         </div>
       )}

@@ -25,7 +25,13 @@ export interface ClassificationResult {
   disclaimer: string;
 }
 
+export interface Sample {
+  label: string;
+  text: string;
+  tag: string | null;
+}
+
 export interface SamplesResponse {
-  samples: string[];
+  samples: Sample[];
   disclaimer: string;
 }

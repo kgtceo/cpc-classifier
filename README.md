@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/kgtceo/cpc-classifier/actions/workflows/ci.yml/badge.svg)](https://github.com/kgtceo/cpc-classifier/actions/workflows/ci.yml)
 
-> ⚠️ **Illustrative subset — not for real classification or prosecution.** This runs against **50
+> ⚠️ **Illustrative subset — not for real classification or prosecution.** This runs against **52
 > illustrative CPC classes**, not the official **~250,000-symbol** CPC scheme; every output is a
 > suggestion for a human to confirm.
 
@@ -37,7 +37,11 @@ How it stays safe:
 3. **Validation enforces it.** After selection, any symbol that wasn't in the retrieved candidates is
    **dropped** — so even if the model invents one, it can't reach the output. The title is normalised
    back to the canonical subset title.
-4. **Abstains** when nothing confidently fits, rather than forcing a weak match.
+4. **Evidence is grounded.** Each selection carries an `evidence_span` — and any span that is not a
+   **verbatim substring** of the invention description (whitespace/case-normalised) drops its
+   candidate. The model can't fabricate the supporting phrase any more than it can invent a symbol:
+   if it can't quote it, it can't claim it.
+5. **Abstains** when nothing confidently fits, rather than forcing a weak match.
 
 ## Architecture
 
@@ -47,7 +51,7 @@ invention ─▶ Voyage embed ─▶ cosine search over CPC subset ─▶ candid
                                                                      ▼
                                                    LLM selects from candidates only
                                                                      │
-                                          validate symbols ⊆ candidates ─▶ ClassificationResult
+                validate symbols ⊆ candidates + evidence verbatim ─▶ ClassificationResult
 ```
 
 ## Quickstart
@@ -66,18 +70,30 @@ cpc-classifier classify "A wearable sensor that measures blood glucose and strea
 ## Evals
 
 ```bash
-python evals/run_evals.py
+python evals/run_evals.py            # deterministic gates
+python evals/run_evals.py --judge    # + opus LLM-as-judge on every case
 ```
 
 - **Top-1 accuracy** — the highest-confidence pick is a correct class.
 - **Recall@k** — expected classes appear among the selections.
 - **Abstention** — non-classifiable inputs (e.g. "a recipe for sourdough bread") are refused.
 - **No-hallucinated-symbol** — every selected symbol exists in the bundled subset (the core guarantee).
+- **Evidence-grounded** — every evidence span is a verbatim substring of the invention (re-verified
+  independently of the classifier's own filter).
+- **LLM-as-judge** (`--judge`) — a separate, stronger model (`claude-opus-4-8`) grades every case on
+  three dimensions: the selection is sound, the evidence genuinely supports each chosen class, and
+  nothing is over-claimed. The judge is a different model from the classifier, so it isn't grading
+  its own homework.
 
-The eval set is **6 labelled cases** (5 classifiable inventions + 1 deliberately non-classifiable, to
-test abstention) over the **50-class** illustrative subset — enough to gate the retrieval + selection
-+ no-hallucination logic, not a benchmark. Add your own — each eval case and CPC
-entry is one JSON object:
+Every run writes a **reproducible artifact** to [`evals/results/latest.json`](evals/results/latest.json)
+— per-case outcomes, metrics, the models used, and a timestamp. The numbers below come from that file.
+
+The eval set is **12 labelled cases** (10 synthetic classifiable inventions + 1 deliberately
+non-classifiable, to test abstention + **1 real granted patent**: the abstract of
+**US 4,405,829 — the RSA public-key cryptosystem (1983, expired)**, labelled with its real CPC
+classifications `H04L 9/302`/`H04L 9/30`) over the **52-class** illustrative subset — enough to gate
+the retrieval + selection + no-hallucination logic, not a benchmark. Add your own — each eval case
+and CPC entry is one JSON object:
 
 ```json
 // evals/dataset/cases.json
@@ -88,10 +104,21 @@ entry is one JSON object:
 
 Extend `cpc_subset.json` to widen coverage, and add cases to test on your real domain.
 
-**Latest run (claude-sonnet-4-6, voyage-3 embeddings):** all gates pass — **TOP-1 accuracy 5/5** and
-recall@k **1.00** across the classifiable inventions (automotive→B60W, cryptography→H04L 9/00,
-wearable→A61B 5/00…), correct **abstention** on a non-classifiable input, and every selected symbol
-exists in the bundled subset (no hallucinated code).
+**Latest run (claude-sonnet-4-6 classifier, voyage-3 embeddings, claude-opus-4-8 judge — full
+results in [`evals/results/latest.json`](evals/results/latest.json)):** all gates pass —
+**TOP-1 accuracy 11/11** across the classifiable inventions, correct **abstention** on the
+non-classifiable input, **no hallucinated symbol**, **every evidence span verbatim-grounded**, and
+the opus judge passes **12/12** cases on all three dimensions. The real-patent case lands exactly:
+the RSA abstract classifies to `H04L 9/302` / `H04L 9/30` / `H04L 9/00` — matching the patent's
+actual CPC classifications.
+
+**The judge earned its keep:** on an earlier run it failed two cases where the classifier
+*over-selected* — adding security/cryptography classes to a mobile-payment invention because the
+word "authorises" appeared, and reading "digital signatures" as an explicit public-key disclosure.
+Every deterministic gate passed; only the judge caught it. The fix was a tighter selection rule in
+the classifier prompt ("select only classes the description explicitly supports; do not infer
+mechanisms the text does not state"), after which all 12 cases pass. That's the point of layering
+an LLM judge over deterministic gates: set-membership can't see over-claiming.
 
 ## Tests
 
@@ -126,7 +153,7 @@ See [DEPLOY.md](./DEPLOY.md) — the FastAPI backend on Railway (via the `Docker
 
 ## Limitations (what it does NOT do)
 
-- Classifies only against the **50-class illustrative subset** — a real classification needs the full
+- Classifies only against the **52-class illustrative subset** — a real classification needs the full
   CPC scheme (~250,000 symbols) and a professional search. This is a demonstration of the *method*,
   not a production classifier.
 - Quality is bounded by **retrieval**: if the right class isn't in the subset (or isn't retrieved),
