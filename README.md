@@ -2,6 +2,10 @@
 
 ### ▶ Live demo: **[cpc-classifier.kareemghazal.com](https://cpc-classifier.kareemghazal.com)**
 
+> ⚠️ **Illustrative subset — not for real classification or prosecution.** This runs against **50
+> illustrative CPC classes**, not the official **~250,000-symbol** CPC scheme; every output is a
+> suggestion for a human to confirm.
+
 Paste an invention description and get suggested **CPC (Cooperative Patent Classification)** classes
 with the supporting phrase — or an abstention when nothing fits. The model can only pick from
 retrieved candidates, so it can't invent a symbol. (First run ~10–20s.)
@@ -64,6 +68,11 @@ python evals/run_evals.py
 - **Abstention** — non-classifiable inputs (e.g. "a recipe for sourdough bread") are refused.
 - **No-hallucinated-symbol** — every selected symbol exists in the bundled subset (the core guarantee).
 
+The eval set is **6 labelled cases** (5 classifiable inventions + 1 deliberately non-classifiable, to
+test abstention) over the **50-class** illustrative subset — enough to gate the retrieval + selection
++ no-hallucination logic, not a benchmark. Add your own cases to `evals/dataset/cases.json` and CPC
+entries to `cpc_subset.json` to test on your real domain.
+
 **Latest run (claude-sonnet-4-6, voyage-3 embeddings):** all gates pass — **TOP-1 accuracy 5/5** and
 recall@k **1.00** across the classifiable inventions (automotive→B60W, cryptography→H04L 9/00,
 wearable→A61B 5/00…), correct **abstention** on a non-classifiable input, and every selected symbol
@@ -98,6 +107,15 @@ npm run dev                           # open http://localhost:3000
 ```
 
 See [DEPLOY.md](./DEPLOY.md).
+
+## Limitations (what it does NOT do)
+
+- Classifies only against the **50-class illustrative subset** — a real classification needs the full
+  CPC scheme (~250,000 symbols) and a professional search. This is a demonstration of the *method*,
+  not a production classifier.
+- Quality is bounded by **retrieval**: if the right class isn't in the subset (or isn't retrieved),
+  the tool abstains rather than guess — by design, but it means coverage depends on the bundled data.
+- Output is a **suggestion for a human to confirm**, not an authoritative classification.
 
 ## License
 
