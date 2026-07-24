@@ -2,6 +2,8 @@
 
 ### ▶ Live demo: **[cpc-classifier.kareemghazal.com](https://cpc-classifier.kareemghazal.com)**
 
+[![CI](https://github.com/kgtceo/cpc-classifier/actions/workflows/ci.yml/badge.svg)](https://github.com/kgtceo/cpc-classifier/actions/workflows/ci.yml)
+
 > ⚠️ **Illustrative subset — not for real classification or prosecution.** This runs against **50
 > illustrative CPC classes**, not the official **~250,000-symbol** CPC scheme; every output is a
 > suggestion for a human to confirm.
@@ -70,8 +72,17 @@ python evals/run_evals.py
 
 The eval set is **6 labelled cases** (5 classifiable inventions + 1 deliberately non-classifiable, to
 test abstention) over the **50-class** illustrative subset — enough to gate the retrieval + selection
-+ no-hallucination logic, not a benchmark. Add your own cases to `evals/dataset/cases.json` and CPC
-entries to `cpc_subset.json` to test on your real domain.
++ no-hallucination logic, not a benchmark. Add your own — each eval case and CPC
+entry is one JSON object:
+
+```json
+// evals/dataset/cases.json
+{ "invention": "A method for ...", "expected_symbols": ["G06N 3/08"], "expect_abstain": false }
+// src/cpc_classifier/data/cpc_subset.json
+{ "symbol": "G06N 3/08", "title": "Learning methods for neural networks" }
+```
+
+Extend `cpc_subset.json` to widen coverage, and add cases to test on your real domain.
 
 **Latest run (claude-sonnet-4-6, voyage-3 embeddings):** all gates pass — **TOP-1 accuracy 5/5** and
 recall@k **1.00** across the classifiable inventions (automotive→B60W, cryptography→H04L 9/00,
