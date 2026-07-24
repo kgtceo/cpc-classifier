@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { classify, getSamples } from "../lib/api";
 import type { ClassificationResult, Sample } from "../lib/types";
 
@@ -17,6 +17,17 @@ export default function Home() {
       .then((r) => { setSamples(r.samples); setDisclaimer(r.disclaimer); })
       .catch(() => { /* samples optional */ });
   }, []);
+
+  const exampleIdx = useRef(0);
+
+  function loadExample() {
+    if (samples.length === 0) return;
+    const s = samples[exampleIdx.current % samples.length];
+    exampleIdx.current += 1;
+    setInvention(s.text);
+    setResult(null);
+    setError(null);
+  }
 
   async function run(text: string) {
     if (!text.trim()) return;
@@ -53,6 +64,9 @@ export default function Home() {
       />
       <div className="actions">
         <button onClick={() => run(invention)} disabled={loading}>{loading ? "Classifying…" : "Classify"}</button>
+        <button className="ghost" onClick={loadExample} disabled={loading || samples.length === 0}>
+          Load example
+        </button>
       </div>
 
       {samples.length > 0 && (
