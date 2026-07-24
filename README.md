@@ -52,6 +52,9 @@ invention ─▶ Voyage embed ─▶ cosine search over CPC subset ─▶ candid
 
 ## Quickstart
 
+**Requirements:** Python ≥3.10 (backend) · Node ≥18 (the `web/` UI) · an `ANTHROPIC_API_KEY` and a
+`VOYAGE_API_KEY` (embeddings). The offline test suite needs neither.
+
 ```bash
 pip install -e .
 cp .env.example .env   # add ANTHROPIC_API_KEY + VOYAGE_API_KEY
@@ -117,7 +120,8 @@ echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
 npm run dev                           # open http://localhost:3000
 ```
 
-See [DEPLOY.md](./DEPLOY.md).
+See [DEPLOY.md](./DEPLOY.md) — the FastAPI backend on Railway (via the `Dockerfile`; needs
+`ANTHROPIC_API_KEY` + `VOYAGE_API_KEY`) + the Next.js `web/` UI on Vercel, ~5 minutes.
 
 ## Limitations (what it does NOT do)
 
@@ -127,6 +131,13 @@ See [DEPLOY.md](./DEPLOY.md).
 - Quality is bounded by **retrieval**: if the right class isn't in the subset (or isn't retrieved),
   the tool abstains rather than guess — by design, but it means coverage depends on the bundled data.
 - Output is a **suggestion for a human to confirm**, not an authoritative classification.
+
+**Extending to the full CPC scheme:** the retrieval + no-hallucination design scales unchanged — only
+the data grows. Replace `src/cpc_classifier/data/cpc_subset.json` with entries derived from the
+official **Cooperative Patent Classification** bulk data (published by the USPTO/EPO at
+[cooperativepatentclassification.org](https://www.cooperativepatentclassification.org)); each entry is
+just `{ "symbol": ..., "title": ... }`. Larger sets benefit from batching the Voyage embeddings and
+caching the vectors, but the classifier logic doesn't change.
 
 ## License
 
