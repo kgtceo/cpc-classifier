@@ -1,0 +1,38 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cpc-classifier"
+version = "1.0.0"
+description = "Suggest CPC classes for a free-text invention description via retrieval over an illustrative subset — the LLM only picks from retrieved candidates (never hallucinates a symbol) and abstains. Demo; not a substitute for a professional classification search."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Kareem Ghazal" }]
+dependencies = [
+    "anthropic>=0.39",
+    "voyageai>=0.2",
+    "numpy>=1.26",
+    "pydantic>=2.5",
+    "python-dotenv>=1.0",
+    "typer>=0.12",
+    "rich>=13.7",
+    "fastapi>=0.110",
+    "uvicorn>=0.29",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+cpc-classifier = "cpc_classifier.cli:app"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cpc_classifier"]
+artifacts = ["src/cpc_classifier/data/**/*.json"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "tests", "evals"]
+testpaths = ["tests"]
+addopts = "-q"

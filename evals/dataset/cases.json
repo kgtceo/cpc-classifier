@@ -1,0 +1,32 @@
+[
+  {
+    "invention": "A method for training a deep neural network by adjusting weights via backpropagation so it learns to recognise objects in images.",
+    "expected_symbols": ["G06N 3/08", "G06N 3/02"],
+    "expect_abstain": false
+  },
+  {
+    "invention": "A rechargeable lithium-ion secondary battery cell with improved electrode chemistry for electric vehicles.",
+    "expected_symbols": ["H01M 10/00", "H01M"],
+    "expect_abstain": false
+  },
+  {
+    "invention": "An automotive driver-assistance system that estimates road conditions and controls vehicle speed and steering using lidar and radar sensors.",
+    "expected_symbols": ["B60W 30/00", "B60W 40/00", "B60W"],
+    "expect_abstain": false
+  },
+  {
+    "invention": "A cryptographic protocol for verifying the identity of a user during secure communication over a digital network using digital signatures.",
+    "expected_symbols": ["H04L 9/32", "H04L 9/00"],
+    "expect_abstain": false
+  },
+  {
+    "invention": "A wearable device that measures a patient's physiological signals for diagnostic purposes and identifies the wearer.",
+    "expected_symbols": ["A61B 5/00", "A61B"],
+    "expect_abstain": false
+  },
+  {
+    "invention": "A new recipe for a gluten-free sourdough bread using a wild yeast starter and a slow overnight fermentation.",
+    "expected_symbols": [],
+    "expect_abstain": true
+  }
+]
